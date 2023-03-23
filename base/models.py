@@ -3,6 +3,8 @@ from django.db import models
 
 
 class BaseAudits(models.Model):
+    """Base model for audits."""
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -10,9 +12,20 @@ class BaseAudits(models.Model):
         abstract = True
 
 
+class Topic(models.Model):
+    """Model for managing topics."""
+
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
 class Room(BaseAudits):
-    # host =
-    # topic =
+    """Model for managing the chat rooms."""
+
+    host = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     # participants =
@@ -28,6 +41,8 @@ class Room(BaseAudits):
 
 
 class Message(BaseAudits):
+    """Model for managing the messages."""
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="messages")
     body = models.TextField()

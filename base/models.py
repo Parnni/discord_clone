@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -27,6 +28,7 @@ class Room(BaseAudits):
 
 
 class Message(BaseAudits):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="messages")
     body = models.TextField()
 

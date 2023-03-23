@@ -1,3 +1,6 @@
+from base import models
 from django.contrib import admin
 
-# Register your models here.
+admin.site.register(models.Room)
+admin.site.register(models.Topic)
+admin.site.register(models.Message)

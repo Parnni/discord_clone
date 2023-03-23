@@ -41,7 +41,7 @@ class Room(BaseAudits):
     # participants =
 
     class Meta:
-        ordering = ["-created"]
+        ordering = ["-updated", "-created"]
         verbose_name = "Room"
         verbose_name_plural = "Rooms"
 
@@ -58,6 +58,6 @@ class Message(BaseAudits):
     body = models.TextField()
 
     class Meta:
-        ordering = ["-created"]
+        ordering = ["-updated", "-created"]
         verbose_name = "Message"
         verbose_name_plural = "Messages"

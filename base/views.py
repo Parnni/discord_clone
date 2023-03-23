@@ -1,11 +1,26 @@
 from base import forms
-from base.models import Room
+from base.models import Room, Topic
 from django.shortcuts import redirect, render
+
+# Room Views.
 
 
 def home(request):
-    rooms = Room.objects.all()
-    context = {"rooms": rooms}
+    query = request.GET.get("q", "")
+
+    rooms = (
+        Room.objects.filter(topic__name__icontains=query)
+        if query
+        else Room.objects.all()
+    )
+    rooms_count = rooms.count()
+    topics = Topic.objects.all()
+
+    context = {
+        "rooms": rooms,
+        "rooms_count": rooms_count,
+        "topics": topics,
+    }
     return render(request, "base/home.html", context)
 
 

@@ -5,12 +5,18 @@
 <h1>HOME</h1>
 
 <div>
+    <a href="{% url 'create-room' %}">Create a room</a>
+</div>
+
+<div>
     {% for room in rooms %}
     <div>
         <div>
             <span>@{{room.host.username}}</span>
             <h2>{{room.id}} --> <a href="{% url 'room' room.id %}">{{room.name}}</a></h2>
             <small>{{room.topic.name}}</small>
+            <a href="{% url 'update-room' room.id %}">Edit</a>
+            <a href="{% url 'delete-room' room.id %}">Delete</a>
             <hr>
         </div>
     </div>

@@ -17,9 +17,25 @@ def room(request, pk):
 def create_room(request):
     form = forms.RoomForm()
 
-    # Verifying the data for POST.
+    # Verifying the posted data.
     if request.method == "POST":
         form = forms.RoomForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+
+    context = {"form": form}
+    return render(request, "base/create_room.html", context)
+
+
+def update_room(request, pk):
+    room = Room.objects.get(id=pk)
+    form = forms.RoomForm(instance=room)
+
+    # Verifying the posted data.
+    if request.method == "POST":
+        form = forms.RoomForm(instance=room, data=request.POST)
 
         if form.is_valid():
             form.save()

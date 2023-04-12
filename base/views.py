@@ -2,13 +2,17 @@ from base import forms
 from base.models import Room, Topic
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
-
-# Room Views.
 
 
 def login_page(request):
+    # Redirect to home if the user is already authenticated.
+    if request.user.is_authenticated:
+        return redirect("home")
+
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -59,6 +63,7 @@ def room(request, pk):
     return render(request, "base/room.html", context)
 
 
+@login_required(login_url="login")
 def create_room(request):
     form = forms.RoomForm()
 
@@ -74,9 +79,14 @@ def create_room(request):
     return render(request, "base/create_room.html", context)
 
 
+@login_required(login_url="login")
 def update_room(request, pk):
     room = Room.objects.get(id=pk)
     form = forms.RoomForm(instance=room)
+
+    # Only the owner is allowed to make changes.
+    if request.user != room.host:
+        return HttpResponseBadRequest("Not allowed!")
 
     # Verifying the posted data.
     if request.method == "POST":
@@ -90,8 +100,13 @@ def update_room(request, pk):
     return render(request, "base/create_room.html", context)
 
 
+@login_required(login_url="login")
 def delete_room(request, pk):
     room = Room.objects.get(id=pk)
+
+    # Only the owner is allowed to make changes.
+    if request.user != room.host:
+        return HttpResponseBadRequest("Not allowed!")
 
     if request.method == "POST":
         room.delete()

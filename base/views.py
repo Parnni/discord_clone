@@ -1,8 +1,38 @@
 from base import forms
 from base.models import Room, Topic
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
 # Room Views.
+
+
+def login_page(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        try:
+            user = User.objects.get(username=username)
+        except:
+            messages.error(request, f"{username} doesn't exist")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect("home")
+        else:
+            messages.error("Incorrect credentials are passed")
+
+    context = {}
+    return render(request, "base/login_register.html", context)
+
+
+def logout_page(request):
+    logout(request)
+    return redirect("home")
 
 
 def home(request):
